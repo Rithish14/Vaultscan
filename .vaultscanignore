@@ -1,0 +1,11 @@
+# Ignore Jenkins files
+jenkins/
+*.sh
+
+# Ignore test and config folders
+test/
+config/
+
+# Ignore XML and LICENSE files
+pom.xml
+LICENSE.txt
