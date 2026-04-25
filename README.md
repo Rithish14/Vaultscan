@@ -64,7 +64,51 @@ java -jar target/vaultscan-1.0-SNAPSHOT.jar scan . --baseline vaultscan-baseline
 
 ## GitHub Actions
 
-The included workflow builds, tests, scans the repository, and uploads SARIF to GitHub code scanning.
+Vaultscan can be used as a reusable GitHub Action:
+
+```yaml
+name: Vaultscan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Vaultscan
+        uses: Rithish14/Vaultscan@main
+        with:
+          scan-path: .
+          format: sarif
+          output: vaultscan.sarif
+          fail-on: high
+```
+
+Action inputs:
+
+| Input | Default | Description |
+| --- | --- | --- |
+| `scan-path` | `.` | Path to scan in the caller repository. |
+| `format` | `sarif` | Report format: `text`, `json`, `sarif`, or `junit`. |
+| `output` | `vaultscan.sarif` | Report output path. |
+| `fail-on` | `high` | Minimum severity that fails the workflow: `low`, `medium`, `high`, `critical`, or `none`. |
+| `baseline` | empty | Optional baseline fingerprint file. |
+| `upload-sarif` | `true` | Upload SARIF to GitHub code scanning when `format` is `sarif`. |
+
+For pull requests from forks, GitHub may block SARIF uploads. In that case set `upload-sarif: false` on pull request runs and upload SARIF only on trusted push runs.
+
+The included workflow builds, tests, scans the repository through the local action wrapper, and uploads SARIF to GitHub code scanning on pushes.
 
 ## Jenkins
 
