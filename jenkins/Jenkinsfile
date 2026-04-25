@@ -19,7 +19,17 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') { 
+        stage('Vaultscan') {
+            steps {
+                sh 'java -jar target/vaultscan-1.0-SNAPSHOT.jar scan . --format junit --output target/vaultscan-junit.xml --fail-on high'
+            }
+            post {
+                always {
+                    junit 'target/vaultscan-junit.xml'
+                }
+            }
+        }
+        stage('Deliver') {
             steps {
                 sh './jenkins/scripts/deliver.sh' 
             }

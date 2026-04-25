@@ -1,4 +1,4 @@
-name: VaultScan Secrets Detection
+name: Vaultscan CI
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    name: Build And Test
+  build-and-scan:
+    name: Build, Test, And Scan
     runs-on: ubuntu-latest
 
     steps:
@@ -21,5 +21,14 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Run Maven Tests
-        run: mvn -B test
+      - name: Build And Test
+        run: mvn -B test package
+
+      - name: Run Vaultscan
+        run: java -jar target/vaultscan-1.0-SNAPSHOT.jar scan . --format sarif --output vaultscan.sarif --fail-on high
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: vaultscan.sarif

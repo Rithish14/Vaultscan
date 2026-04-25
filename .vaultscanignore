@@ -1,11 +1,13 @@
-# Ignore Jenkins files
-jenkins/
-*.sh
+# Build and local tooling output
+target/
+tools/
+.git/
+.idea/
+.vscode/
 
-# Ignore test and config folders
-test/
-config/
+# Ignore test fixtures that intentionally contain fake secrets
+src/test/java/
+src/test/resources/fixtures/
 
-# Ignore XML and LICENSE files
-pom.xml
-LICENSE.txt
+# Optional project-specific examples
+jenkins/scripts/
